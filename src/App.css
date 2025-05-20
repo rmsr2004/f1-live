@@ -1,0 +1,44 @@
+body {
+    font-family: 'Titillium Web', sans-serif;
+    background-color: #15151E;
+    color: #ffffff;
+}
+
+.f1-red {
+    background-color: #E10600;
+}
+
+.f1-red-text {
+    color: #E10600;
+}
+
+.f1-card {
+    background-color: #1F1F2B;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.f1-card:hover {
+    transform: translateY(-5px);
+}
+
+.next-race-countdown {
+    background: linear-gradient(90deg, #E10600 0%, #FF8700 100%);
+}
+
+.tab-active {
+    border-bottom: 3px solid #E10600;
+}
+
+.race-status-completed {
+    background-color: #27954A;
+}
+
+.race-status-next {
+    background-color: #E10600;
+}
+
+.race-status-upcoming {
+    background-color: #3671C6;
+}

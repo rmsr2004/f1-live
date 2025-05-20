@@ -4,8 +4,7 @@ const API_URL = 'https://api.jolpi.ca/ergast/';
 
 interface Sessions {
     sessionName: string;
-    date: string;
-    time: string
+    datetime: string;
 }
 
 export interface SessionResults {
@@ -22,9 +21,19 @@ export interface SessionResults {
 export interface GrandPrixData {
     round: number;
     raceName: string;
-    date: string;
-    time: string;
+    circuitName: string;
+    dateRange: string;
+    raceDateISO: string;
     sessions: Sessions[];
+}
+
+export interface GrandPrixShortData {
+    round: number;
+    raceName: string;
+    circuitName: string;
+    dateRange: string;
+    winner: string;
+    status: string;
 }
 
 export interface GrandPrixResults {
@@ -46,24 +55,38 @@ export async function getNextGrandPrix() {
         { key: 'FirstPractice', name: 'FP1' },
         { key: 'SecondPractice', name: 'FP2' },
         { key: 'ThirdPractice', name: 'FP3' },
-        { key: 'Qualifying', name: 'Qualifying' },
+        { key: 'Qualifying', name: 'QUALIFYING' },
         { key: 'Sprint', name: 'Sprint' },
         { key: 'SprintQualifying', name: 'Sprint Qualifying' },
     ];
 
     const sessions = sessionMappings
         .filter(({ key }) => race[key])
-        .map(({ key, name }) => ({
-            sessionName: name,
-            date: race[key]!.date,
-            time: race[key]!.time,
-        }));
+        .map(({ key, name }) => {
+            const dateStr = race[key]!.date;
+            const timeStr = race[key]!.time;
+
+            return {
+                sessionName: name,
+                datetime: formatDateTime(dateStr, timeStr),
+            };
+        });
+
+    sessions.push({
+        sessionName: 'RACE',
+        datetime: formatDateTime(race.date, race.time),
+    })
+
+    const start = race.FirstPractice.date;
+    const end = race.date;
+    const dateRange = formatDateRange(start, end);
 
     const grandPrixData: GrandPrixData = {
         round: race.round,
-        raceName: race.raceName,
-        date: race.date,
-        time: race.time,
+        raceName: race.raceName.toUpperCase(),
+        circuitName: race.Circuit.circuitName + ", " + race.Circuit.Location.locality,
+        dateRange: dateRange,
+        raceDateISO: getISOStringFromDateTimePT(race.date, race.time),
         sessions: sessions,
     };
 
@@ -72,38 +95,33 @@ export async function getNextGrandPrix() {
 
 export async function getAllGrandPrixes() {
     const response = await API.get('/f1/2025.json');
-
     const races = response.data.MRData.RaceTable.Races;
 
-    const allGrandPrixes: GrandPrixData[] = races.map((race: any) => {
-        const sessions: GrandPrixData["sessions"] = [];
+    let index = 1;
 
-        const sessionKeys = [
-            { key: "FirstPractice", name: "FP1" },
-            { key: "SecondPractice", name: "FP2" },
-            { key: "ThirdPractice", name: "FP3" },
-            { key: "Sprint", name: "Sprint" },
-            { key: "SprintQualifying", name: "Sprint Qualifying" },
-            { key: "Qualifying", name: "Qualifying" },
-        ];
+    const allGrandPrixesPromises = races.map(async (race: any) => {
+        const start = race.FirstPractice?.date ?? race.date;
+        const end = race.date;
+        const dateRange = formatDateRange(start, end);
 
-        for (const { key, name } of sessionKeys) {
-            if (race[key]) {
-                sessions.push({
-                    sessionName: name,
-                    date: race[key].date,
-                    time: race[key].time,
-                });
-            }
-        }
+        const raceDateTime = new Date(`${race.date}T${race.time}`);
+        const now = new Date();
+
+        const status = raceDateTime < now ? 'COMPLETED' : 'NEXT';
+
+        const winner = status === 'COMPLETED' ? await getRaceWinner(index++) : "N/D";
 
         return {
-            raceName: race.raceName,
-            date: race.date,
-            time: race.time,
-            sessions,
+            round: race.round,
+            raceName: race.raceName.toUpperCase(),
+            circuitName: `${race.Circuit.circuitName}, ${race.Circuit.Location.locality}`,
+            dateRange: dateRange,
+            winner: winner,
+            status: status,
         };
     });
+
+    const allGrandPrixes = await Promise.all(allGrandPrixesPromises);
 
     return allGrandPrixes;
 }
@@ -136,12 +154,16 @@ export async function getGrandPrixResults(round: number) {
             time: race[key]?.time,
         }));
 
+    const start = race.FirstPractice.date;
+    const end = race.date;
+    const dateRange = formatDateRange(start, end);
+
     const grandPrixData: GrandPrixData = {
         round: race.round,
         raceName: race.raceName,
-        date: race.date,
-        time: race.time,
-        sessions,
+        circuitName: race.Circuit.circuitName + ", " + race.Circuit.Location.locality,
+        dateRange: dateRange,
+        sessions: sessions,
     };
 
     function mapResults(resultsArray: any[]): SessionResults[] {
@@ -189,4 +211,59 @@ export async function getConstructorStandings() {
     }));
 
     return formattedStandings;
+}
+
+async function getRaceWinner(round: number) {
+    const response = await API.get(`/f1/2025/${round}/results.json`);
+
+    if (!response.data.MRData.RaceTable.Races[0]) {
+        return "N/D";
+    }
+
+    const winner = response.data.MRData.RaceTable.Races[0].Results[0].Driver;
+
+    return `${winner.givenName} ${winner.familyName}`;
+
+}
+
+function getISOStringFromDateTimePT(date: string, time: string): string {
+    const dateTime = new Date(`${date}T${time}`);
+    const utcDate = new Date(
+        dateTime.toLocaleString('en-US', { timeZone: 'Europe/Lisbon' })
+    );
+    return utcDate.toISOString();
+}
+
+function formatDateTime(date: string, time: string): string {
+    const dt = new Date(`${date}T${time}`);
+    const formatter = new Intl.DateTimeFormat('en-EN', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'long',
+        timeZone: 'Europe/Lisbon',
+    });
+    const weekdayDayMonth = formatter.format(dt).replace('.', '').replace(/^./, c => c.toUpperCase());
+    const hourMinute = dt.toLocaleTimeString('pt-PT', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Europe/Lisbon',
+    });
+    return `${weekdayDayMonth} - ${hourMinute}`;
+}
+
+function formatDateRange(startDateStr: string, endDateStr: string): string {
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
+
+    const dayStart = startDate.getDate();
+    const dayEnd = endDate.getDate();
+
+    const month = startDate.toLocaleString('en-EN', { month: 'long' });
+    const year = startDate.getFullYear();
+
+    return `${dayStart}-${dayEnd} ${capitalize(month)} ${year}`;
+}
+
+function capitalize(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
