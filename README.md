@@ -107,8 +107,8 @@ Github: https://github.com/rmsr2004.com
 
 This project was developed as a personal app to follow the Formula 1 season live with modern technologies and usability in mind.
 
-[Home Page](assets/homepage.png)
+![Home Page](assets/homepage.png)
 
-[Grand Prix Details](assets/grandprix.png)
+![Grand Prix Details](assets/grandprix.png)
 
-[Standings](assets/standings.png)
+![Standings](assets/standings.png)
