@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "f1-live",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "identifier": "com.f1-live.app",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -27,9 +27,8 @@
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
+      "icons/256x256.png",
+      "icons/512x512.png"
     ]
   }
 }
