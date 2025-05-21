@@ -103,12 +103,14 @@ Rodrigo Rodrigues - rodrigomiguelsr2004@gmail.com
 
 Github: https://github.com/rmsr2004.com
 
-## 
-
-This project was developed as a personal app to follow the Formula 1 season live with modern technologies and usability in mind.
+## Preview
 
 ![Home Page](assets/homepage.png)
 
 ![Grand Prix Details](assets/grandprix.png)
 
 ![Standings](assets/standings.png)
+
+##
+
+This project was developed as a personal app to follow the Formula 1 season live with modern technologies and usability in mind.
