@@ -54,7 +54,7 @@ function StandingsPage() {
                             </svg>
                         </button>
                     </Link>
-                    <h1 className="text-3xl md:text-4xl font-black ml-4">F1-LIVE</h1>
+                    <h1 className="text-3xl md:text-4xl font-black ml-4">F1 LIVE</h1>
                 </div>
                 {type === 'drivers' ? (
                     <Link to="/standings/constructors" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Constructors Standings</Link>

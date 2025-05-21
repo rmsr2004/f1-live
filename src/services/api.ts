@@ -189,7 +189,7 @@ export async function getGrandPrixResults(round: number): Promise<GrandPrixResul
     const dateRange = formatDateRange(start, end);
 
     const grandPrixData: GrandPrixData = {
-        round: race.round,
+        round: raceInfo.round,
         raceName: raceInfo.raceName.toUpperCase(),
         circuitName: `${raceInfo.Circuit.circuitName}, ${raceInfo.Circuit.Location.locality}`,
         dateRange: dateRange,

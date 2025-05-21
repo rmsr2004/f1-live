@@ -55,7 +55,7 @@ function GrandPrix() {
                             </svg>
                         </button>
                     </Link>
-                    <h1 className="text-3xl md:text-4xl font-black ml-4">F1-LIVE</h1>
+                    <h1 className="text-3xl md:text-4xl font-black ml-4">F1 LIVE</h1>
                 </div>
                 <div className="hidden md:block bg-[#1F1F2B] rounded-full px-4 py-2">
                     <span>2025 Season</span>
@@ -121,7 +121,9 @@ function GrandPrix() {
             <ResultsSection
                 qualifyingResults={qualifyingResults}
                 raceResults={raceResults}
-                sprintResults={sprintResults}
+                {...(grandPrixData.sessions.some(session => session.sessionName === 'SPRINT') && sprintResults && {
+                    sprintResults,
+                })}
             />
         </div>
     );

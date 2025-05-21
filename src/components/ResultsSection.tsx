@@ -157,7 +157,7 @@ function ResultsSection({ qualifyingResults, raceResults, sprintResults }: Resul
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">RESULTS</h3>
                 <div className="flex space-x-2">
-                    {sprintResults && sprintResults.length > 0 && (
+                    {sprintResults && (
                         <button
                             className={`session-btn px-4 py-2 rounded-lg text-sm font-bold ${activeSession === "sprint" ? "bg-white text-black" : "bg-[#1F1F2B] text-white"}`}
                             onClick={() => setActiveSession("sprint")}

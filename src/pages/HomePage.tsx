@@ -90,7 +90,7 @@ function HomePage() {
                                         <span className="font-bold">ROUND {gp.round}</span>
                                         <div className={`text-xs font-bold px-3 py-1 rounded-full ${gp.status === 'COMPLETED' ? 'race-status-completed' : 'race-status-upcoming'
                                             }`}>
-                                            {gp.status === 'COMPLETED' ? 'COMPLETED' : 'NEXT'}
+                                            {gp.status === 'COMPLETED' ? 'COMPLETED' : 'UPCOMING'}
                                         </div>
                                     </div>
                                 </div>
