@@ -42,7 +42,7 @@
 
 ### Linux (Ubuntu/Debian)
 
-1. Download the `.deb` package from `src-tauri/target/release/bundle/deb/`.
+1. Download the `.deb` package from `release/`.
 
 2. Install the package with:
 
