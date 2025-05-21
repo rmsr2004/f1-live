@@ -42,6 +42,15 @@ export interface SessionResults {
     };
 }
 
+export interface Standings {
+    standings: {
+        name: string;
+        constructor?: string;
+        points: number;
+    }[];
+    lastUpdate: string;
+}
+
 export interface GrandPrixResults {
     grandPrixData: GrandPrixData,
     raceResults: SessionResults[];
@@ -216,22 +225,28 @@ export async function getGrandPrixResults(round: number): Promise<GrandPrixResul
     };
 }
 
-export async function getDriverStandings() {
-    const response = await API.get('/f1/2025/driverStandings.json');
+export async function getDriverStandings(): Promise<Standings> {
+    let response = await API.get('/f1/2025/driverStandings.json');
 
     const standings = response.data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
 
     const formattedStandings = standings.map((entry: any) => ({
         name: `${entry.Driver.givenName} ${entry.Driver.familyName}`,
         constructor: entry.Constructors[0].name,
-        points: entry.points,
+        points: parseInt(entry.points),
     }));
 
-    return formattedStandings;
+    response = await API.get('/f1/2025/last.json');
+    const lastUpdate = response.data.MRData.RaceTable.Races[0].raceName;
+
+    return {
+        standings: formattedStandings,
+        lastUpdate: lastUpdate.toUpperCase(),
+    };
 }
 
-export async function getConstructorStandings() {
-    const response = await API.get('/f1/2025/constructorStandings.json');
+export async function getConstructorStandings(): Promise<Standings> {
+    let response = await API.get('/f1/2025/constructorStandings.json');
 
     const standings = response.data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
 
@@ -240,7 +255,13 @@ export async function getConstructorStandings() {
         points: entry.points,
     }));
 
-    return formattedStandings;
+    response = await API.get('/f1/2025/last.json');
+    const lastUpdate = response.data.MRData.RaceTable.Races[0].raceName;
+
+    return {
+        standings: formattedStandings,
+        lastUpdate: lastUpdate.toUpperCase(),
+    };
 }
 
 async function getRaceWinner(round: number) {
