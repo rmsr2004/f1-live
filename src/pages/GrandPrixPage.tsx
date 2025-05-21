@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getGrandPrixResults, GrandPrixResults } from '../services/api';
 import ResultsSection from '../components/ResultsSection';
+import Spinner from '../components/Spinner';
 
 function getTeamColorClass(teamName: string): string {
     const map: Record<string, string> = {
@@ -10,10 +11,10 @@ function getTeamColorClass(teamName: string): string {
         'Mercedes': 'team-color-mercedes',
         'McLaren': 'team-color-mclaren',
         'Aston Martin': 'team-color-aston',
-        'Alpine': 'team-color-alpine',
+        'Alpine F1 Team': 'team-color-alpine',
         'Williams': 'team-color-williams',
-        'Kick Sauber': 'team-color-sauber',
-        'RB': 'team-color-rb',
+        'Sauber': 'team-color-sauber',
+        'RB F1 Team': 'team-color-rb',
         'Haas F1 Team': 'team-color-haas',
     };
 
@@ -22,7 +23,7 @@ function getTeamColorClass(teamName: string): string {
 
 function GrandPrix() {
     const { round } = useParams<{ round: string }>();
-    const [data, setData] = useState<GrandPrixResults | null>(null);
+    const [data, setData] = useState<GrandPrixResults>();
 
     useEffect(() => {
         if (!round) return;
@@ -40,7 +41,13 @@ function GrandPrix() {
         fetchData();
     }, [round]);
 
-    if (!data) return <div className="text-white">Loading...</div>;
+    if (!data) {
+        return (
+            <div className="container mx-auto px-4 py-8 max-w-6xl">
+                <Spinner />
+            </div>
+        );
+    }
 
     const { grandPrixData, raceResults, qualifyingResults, sprintResults, status } = data;
 
@@ -53,14 +60,19 @@ function GrandPrix() {
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
-                        </button>
-                    </Link>
+                        </button >
+                    </Link >
                     <h1 className="text-3xl md:text-4xl font-black ml-4">F1 LIVE</h1>
+                </div >
+                <div>
+                    <Link to="/standings/drivers" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Drivers Standings</Link>
+
+                    <Link to="/standings/constructors" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Constructors Standings</Link>
                 </div>
                 <div className="hidden md:block bg-[#1F1F2B] rounded-full px-4 py-2">
                     <span>2025 Season</span>
                 </div>
-            </header>
+            </header >
 
             <section className="mb-8">
                 <div className="f1-card">
@@ -125,7 +137,7 @@ function GrandPrix() {
                     sprintResults,
                 })}
             />
-        </div>
+        </div >
     );
 }
 

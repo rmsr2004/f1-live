@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getDriverStandings, getConstructorStandings, Standings } from '../services/api';
+import Spinner from '../components/Spinner';
 
 function getTeamColorClass(teamName: string): string {
     const map: Record<string, string> = {
@@ -42,6 +43,15 @@ function StandingsPage() {
 
         fetchStandings();
     }, [type]);
+
+
+    if (!standings) {
+        return (
+            <div className="container mx-auto px-4 py-8 max-w-6xl">
+                <Spinner />
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-6xl">
