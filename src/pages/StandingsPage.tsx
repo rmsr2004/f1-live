@@ -1,24 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+
 import { getDriverStandings, getConstructorStandings, Standings } from '../services/api';
 import Spinner from '../components/Spinner';
-
-function getTeamColorClass(teamName: string): string {
-    const map: Record<string, string> = {
-        'Red Bull': 'team-color-redbull',
-        'Ferrari': 'team-color-ferrari',
-        'Mercedes': 'team-color-mercedes',
-        'McLaren': 'team-color-mclaren',
-        'Aston Martin': 'team-color-aston',
-        'Alpine F1 Team': 'team-color-alpine',
-        'Williams': 'team-color-williams',
-        'Sauber': 'team-color-sauber',
-        'RB F1 Team': 'team-color-rb',
-        'Haas F1 Team': 'team-color-haas',
-    };
-
-    return map[teamName];
-}
+import getTeamColorClass from '../utils/utils';
 
 function StandingsPage() {
     const { type } = useParams<{ type: string }>();
@@ -30,10 +15,8 @@ function StandingsPage() {
                 let data;
                 if (type === 'drivers') {
                     data = await getDriverStandings();
-                    console.log('Driver Standings:', data);
                 } else if (type === 'constructors') {
                     data = await getConstructorStandings();
-                    console.log('Constructor Standings:', data);
                 }
                 setStandings(data || null);
             } catch (err) {
@@ -90,7 +73,7 @@ function StandingsPage() {
                                 <tr>
                                     <th className="px-3 py-4 text-left">Pos</th>
                                     {type === 'drivers' && (
-                                        <th className="pth3 py-4 text-left">Driver</th>                                    
+                                        <th className="pth3 py-4 text-left">Driver</th>
                                     )}
                                     <th className="px-3 py-4 text-left">Team</th>
                                     <th className="px-3 py-4 text-left">Points</th>

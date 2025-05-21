@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import { getNextGrandPrix, getAllGrandPrixes } from "../services/api";
 import { GrandPrixData, GrandPrixShortData } from "../services/api";
 import Countdown from "../components/Countdown";
-import { Link } from "react-router-dom";
 import Spinner from "../components/Spinner";
 
 function HomePage() {

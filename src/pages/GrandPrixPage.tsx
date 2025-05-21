@@ -1,25 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+
 import { getGrandPrixResults, GrandPrixResults } from '../services/api';
 import ResultsSection from '../components/ResultsSection';
+import getTeamColorClass from '../utils/utils';
 import Spinner from '../components/Spinner';
-
-function getTeamColorClass(teamName: string): string {
-    const map: Record<string, string> = {
-        'Red Bull': 'team-color-redbull',
-        'Ferrari': 'team-color-ferrari',
-        'Mercedes': 'team-color-mercedes',
-        'McLaren': 'team-color-mclaren',
-        'Aston Martin': 'team-color-aston',
-        'Alpine F1 Team': 'team-color-alpine',
-        'Williams': 'team-color-williams',
-        'Sauber': 'team-color-sauber',
-        'RB F1 Team': 'team-color-rb',
-        'Haas F1 Team': 'team-color-haas',
-    };
-
-    return map[teamName];
-}
 
 function GrandPrix() {
     const { round } = useParams<{ round: string }>();
@@ -32,7 +17,6 @@ function GrandPrix() {
             try {
                 const results = await getGrandPrixResults(Number(round));
                 setData(results);
-                console.log('Fetched data:', results);
             } catch (err) {
                 console.error(err);
             }
