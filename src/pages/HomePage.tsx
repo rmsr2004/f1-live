@@ -3,7 +3,6 @@ import { getNextGrandPrix, getAllGrandPrixes } from "../services/api";
 import { GrandPrixData, GrandPrixShortData } from "../services/api";
 import Countdown from "../components/Countdown";
 import { Link } from "react-router-dom";
-import "./HomePage.css";
 
 function HomePage() {
     const [nextGP, setNextGP] = useState<GrandPrixData | null>(null);
@@ -52,7 +51,7 @@ function HomePage() {
                                     <span>{nextGP.dateRange}</span>
                                 </div>
                             </div>
-                            <Countdown targetDate={nextGP.raceDateISO} />
+                            <Countdown targetDate={nextGP.raceDateISO ?? ""} />
                         </div>
                         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                             {nextGP.sessions.map((session, index) => (
@@ -104,7 +103,7 @@ function HomePage() {
                                             <span className="text-sm text-gray-400">WINNER</span>
                                             <p className="font-bold">{gp.winner}</p>
                                         </div>
-                                        <Link to={`/race/${gp.round}`} className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Details</Link>
+                                        <Link to={`/grandprix/${gp.round}`} className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Details</Link>
                                     </div>
                                 </div>
                             </div>

@@ -7,23 +7,12 @@ interface Sessions {
     datetime: string;
 }
 
-export interface SessionResults {
-    position: number;
-    driver: {
-        name: string;
-    };
-    constructor: {
-        name: string;
-    };
-    grid: number | string;
-}
-
 export interface GrandPrixData {
     round: number;
     raceName: string;
     circuitName: string;
     dateRange: string;
-    raceDateISO: string;
+    raceDateISO?: string;
     sessions: Sessions[];
 }
 
@@ -36,10 +25,29 @@ export interface GrandPrixShortData {
     status: string;
 }
 
+export interface SessionResults {
+    position: number;
+    grid?: number;
+    driver: {
+        name: string;
+    };
+    constructor: {
+        name: string;
+    };
+    points?: number;
+    times?: {
+        timeQ1: string;
+        timeQ2: string;
+        timeQ3: string;
+    };
+}
+
 export interface GrandPrixResults {
     grandPrixData: GrandPrixData,
     raceResults: SessionResults[];
     qualifyingResults: SessionResults[];
+    sprintResults: SessionResults[];
+    status: string;
 }
 
 const API = axios.create({
@@ -53,11 +61,11 @@ export async function getNextGrandPrix() {
 
     const sessionMappings: { key: keyof typeof race; name: string }[] = [
         { key: 'FirstPractice', name: 'FP1' },
+        { key: 'SprintQualifying', name: 'SPRINT QUALIFYING' },
+        { key: 'Sprint', name: 'SPRINT' },
         { key: 'SecondPractice', name: 'FP2' },
         { key: 'ThirdPractice', name: 'FP3' },
         { key: 'Qualifying', name: 'QUALIFYING' },
-        { key: 'Sprint', name: 'Sprint' },
-        { key: 'SprintQualifying', name: 'Sprint Qualifying' },
     ];
 
     const sessions = sessionMappings
@@ -84,7 +92,7 @@ export async function getNextGrandPrix() {
     const grandPrixData: GrandPrixData = {
         round: race.round,
         raceName: race.raceName.toUpperCase(),
-        circuitName: race.Circuit.circuitName + ", " + race.Circuit.Location.locality,
+        circuitName: `${race.Circuit.circuitName}, ${race.Circuit.Location.locality}`,
         dateRange: dateRange,
         raceDateISO: getISOStringFromDateTimePT(race.date, race.time),
         sessions: sessions,
@@ -135,33 +143,46 @@ async function safeGet(url: string) {
     }
 }
 
-export async function getGrandPrixResults(round: number) {
+export async function getGrandPrixResults(round: number): Promise<GrandPrixResults> {
+    const raceInfo = await safeGet(`/f1/2025/${round}.json`);
     const race = await safeGet(`/f1/2025/${round}/results.json`);
     const qualifying = await safeGet(`/f1/2025/${round}/qualifying.json`);
+    const sprint = await safeGet(`/f1/2025/${round}/sprint.json`);
 
-    const sessionMappings: { key: string; name: string }[] = [
+    const sessionMappings: { key: keyof typeof raceInfo; name: string }[] = [
         { key: 'FirstPractice', name: 'FP1' },
+        { key: 'SprintQualifying', name: 'SPRINT QUALIFYING' },
+        { key: 'Sprint', name: 'SPRINT' },
         { key: 'SecondPractice', name: 'FP2' },
         { key: 'ThirdPractice', name: 'FP3' },
-        { key: 'Qualifying', name: 'Qualifying' },
+        { key: 'Qualifying', name: 'QUALIFYING' },
     ];
 
     const sessions = sessionMappings
-        .filter(({ key }) => race[key])
-        .map(({ key, name }) => ({
-            sessionName: name,
-            date: race[key]?.date,
-            time: race[key]?.time,
-        }));
+        .filter(({ key }) => raceInfo[key])
+        .map(({ key, name }) => {
+            const dateStr = raceInfo[key]!.date;
+            const timeStr = raceInfo[key]!.time;
 
-    const start = race.FirstPractice.date;
-    const end = race.date;
+            return {
+                sessionName: name,
+                datetime: formatDateTime(dateStr, timeStr),
+            };
+        });
+
+    sessions.push({
+        sessionName: 'RACE',
+        datetime: formatDateTime(raceInfo.date, raceInfo.time),
+    })
+
+    const start = raceInfo.FirstPractice.date;
+    const end = raceInfo.date;
     const dateRange = formatDateRange(start, end);
 
     const grandPrixData: GrandPrixData = {
         round: race.round,
-        raceName: race.raceName,
-        circuitName: race.Circuit.circuitName + ", " + race.Circuit.Location.locality,
+        raceName: raceInfo.raceName.toUpperCase(),
+        circuitName: `${raceInfo.Circuit.circuitName}, ${raceInfo.Circuit.Location.locality}`,
         dateRange: dateRange,
         sessions: sessions,
     };
@@ -172,17 +193,26 @@ export async function getGrandPrixResults(round: number) {
             position: Number(r.position),
             driver: { name: r.Driver.givenName + ' ' + r.Driver.familyName },
             constructor: { name: r.Constructor.name },
-            grid: Number(r.grid) || "",
+            grid: Number(r.grid) || 0,
+            points: Number(r.points) || 0,
+            times: {
+                timeQ1: r.Q1 || "",
+                timeQ2: r.Q2 || "",
+                timeQ3: r.Q3 || "",
+            },
         }));
     }
 
     const raceResults = mapResults(race.Results);
     const qualifyingResults = mapResults(qualifying.QualifyingResults);
+    const sprintResults = mapResults(sprint.SprintResults);
 
     return {
         grandPrixData,
         raceResults,
-        qualifyingResults
+        qualifyingResults,
+        sprintResults,
+        status: raceResults.length > 0 ? 'COMPLETED' : 'UPCOMING',
     };
 }
 

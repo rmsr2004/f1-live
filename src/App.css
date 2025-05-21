@@ -42,3 +42,64 @@ body {
 .race-status-upcoming {
     background-color: #3671C6;
 }
+
+.result-row:nth-child(odd) {
+    background-color: #15151E;
+}
+
+.result-row:hover {
+    background-color: #2A2A3A;
+}
+
+.team-color-redbull {
+    background-color: #0600EF;
+}
+
+.team-color-ferrari {
+    background-color: #DC0000;
+}
+
+.team-color-mercedes {
+    background-color: #00D2BE;
+}
+
+.team-color-mclaren {
+    background-color: #FF8700;
+}
+
+.team-color-aston {
+    background-color: #006F62;
+}
+
+.team-color-alpine {
+    background-color: #0090FF;
+}
+
+.team-color-williams {
+    background-color: #005AFF;
+}
+
+.team-color-rb {
+    background-color: #2B4562;
+}
+
+.team-color-sauber {
+    background-color: #900000;
+}
+
+.team-color-haas {
+    background-color: #FFFFFF;
+}
+
+.session-btn {
+    transition: all 0.3s ease;
+}
+
+.session-btn:hover {
+    transform: translateY(-2px);
+}
+
+.session-btn-active {
+    background-color: #E10600;
+    color: white;
+}

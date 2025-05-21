@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getDriverStandings, getConstructorStandings } from '../services/api';
 
-
 function StandingsPage() {
     const { type } = useParams<{ type: string }>();
     const [standings, setStandings] = useState<any[]>([]);
@@ -45,7 +44,7 @@ function StandingsPage() {
                             <td>{entry.points}</td>
                         </tr>
                     ))}
-                </tbody>
+                </tbody> 
             </table>
         </div>
     );
