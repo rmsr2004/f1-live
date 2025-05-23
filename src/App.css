@@ -43,6 +43,11 @@ body {
     background-color: #3671C6;
 }
 
+.race-status-ongoing {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
 .result-row:nth-child(odd) {
     background-color: #15151E;
 }

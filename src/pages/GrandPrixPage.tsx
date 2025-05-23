@@ -63,7 +63,7 @@ function GrandPrix() {
                     <div className="f1-red p-4">
                         <div className="flex justify-between items-center">
                             <span className="font-bold">ROUND {grandPrixData.round}</span>
-                            <div className={`${status === 'COMPLETED' ? 'race-status-completed' : 'race-status-upcoming'} text-xs font-bold px-3 py-1 rounded-full`}>
+                            <div className={`${status === 'COMPLETED' ? 'race-status-completed' : status === 'ONGOING' ? 'race-status-ongoing': 'race-status-upcoming'} text-xs font-bold px-3 py-1 rounded-full`}>
                                 {status}
                             </div>
                         </div>

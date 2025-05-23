@@ -53,7 +53,12 @@ function HomePage() {
                                 <div className="flex flex-col md:flex-row justify-between">
                                     <div className="mb-6 md:mb-0">
                                         <div className="flex items-center mb-2">
-                                            <div className="race-status-next text-xs font-bold px-3 py-1 rounded-full mr-3">NEXT</div>
+                                            <div
+                                                className={`${nextGP.status === 'NEXT' ? 'race-status-next' : 'race-status-ongoing'} text-xs font-bold px-3 py-1 rounded-full mr-3`}
+                                            >
+                                                {nextGP.status}
+                                            </div>
+
                                             <span className="text-gray-400">ROUND {nextGP.round}</span>
                                         </div>
                                         <h3 className="text-2xl md:text-3xl font-bold mb-2">{nextGP.raceName}</h3>
@@ -97,9 +102,15 @@ function HomePage() {
                                         <div className="f1-red p-4">
                                             <div className="flex justify-between items-center">
                                                 <span className="font-bold">ROUND {gp.round}</span>
-                                                <div className={`text-xs font-bold px-3 py-1 rounded-full ${gp.status === 'COMPLETED' ? 'race-status-completed' : 'race-status-upcoming'
-                                                    }`}>
-                                                    {gp.status === 'COMPLETED' ? 'COMPLETED' : 'UPCOMING'}
+                                                <div
+                                                    className={`text-xs font-bold px-3 py-1 rounded-full ${gp.status === 'COMPLETED'
+                                                        ? 'race-status-completed'
+                                                        : gp.status === 'ONGOING'
+                                                            ? 'race-status-ongoing'
+                                                            : 'race-status-upcoming'
+                                                        }`}
+                                                >
+                                                    {gp.status}
                                                 </div>
                                             </div>
                                         </div>

@@ -15,6 +15,7 @@ export interface GrandPrixData {
     dateRange: string;
     raceDateISO?: string;
     sessions: Sessions[];
+    status?: string;
 }
 
 export interface GrandPrixShortData {
@@ -108,6 +109,13 @@ export async function getNextGrandPrix() {
     const end = race.date;
     const dateRange = formatDateRange(start, end);
 
+    let status = 'NEXT';
+    const fp1DateTime = new Date(`${start}T${race.FirstPractice.time}`);
+    
+    if (fp1DateTime < new Date()) {
+        status = 'ONGOING';
+    }
+
     const grandPrixData: GrandPrixData = {
         round: race.round,
         raceName: race.raceName.toUpperCase(),
@@ -115,6 +123,7 @@ export async function getNextGrandPrix() {
         dateRange: dateRange,
         raceDateISO: getISOStringFromDateTimePT(race.date, race.time),
         sessions: sessions,
+        status: status,
     };
 
     return grandPrixData;
@@ -127,14 +136,19 @@ export async function getAllGrandPrixes() {
     let index = 1;
 
     const allGrandPrixesPromises = races.map(async (race: any) => {
-        const start = race.FirstPractice?.date ?? race.date;
+        const start = race.FirstPractice?.date;
         const end = race.date;
         const dateRange = formatDateRange(start, end);
 
         const raceDateTime = new Date(`${race.date}T${race.time}`);
         const now = new Date();
 
-        const status = raceDateTime < now ? 'COMPLETED' : 'NEXT';
+        let status = raceDateTime < now ? 'COMPLETED' : 'NEXT';
+
+        const fp1DateTime = new Date(`${start}T${race.FirstPractice.time}`);
+        if (fp1DateTime < now && now < raceDateTime) {
+            status = 'ONGOING';
+        }
 
         const winner = status === 'COMPLETED' ? await getRaceWinner(index++) : "N/D";
 
@@ -217,12 +231,19 @@ export async function getGrandPrixResults(round: number): Promise<GrandPrixResul
     const qualifyingResults = mapResults(qualifying.QualifyingResults);
     const sprintResults = mapResults(sprint.SprintResults);
 
+    let status = raceResults.length > 0 ? 'COMPLETED' : 'UPCOMING';
+    let fp1DateTime = new Date(`${start}T${raceInfo.FirstPractice.time}`);
+
+    if (fp1DateTime < new Date()) {
+        status = 'ONGOING';
+    }
+
     return {
         grandPrixData,
         raceResults,
         qualifyingResults,
         sprintResults,
-        status: raceResults.length > 0 ? 'COMPLETED' : 'UPCOMING',
+        status: status,
     };
 }
 
