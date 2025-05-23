@@ -47,7 +47,7 @@
 2. Install the package with:
 
 ```bash
-sudo apt install ./f1-live_0.1.0_amd64.deb
+sudo apt install ./F1-Live_1.2.0_amd64.deb
 ```
 
 3. Launch the app from the system menu or via terminal:
