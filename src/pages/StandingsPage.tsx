@@ -98,7 +98,11 @@ function StandingsPage() {
                                                 {type === 'constructors' && (
                                                     <div className={`w-1 h-6 mr-3 ${getTeamColorClass(result.name)}`}></div>
                                                 )}
-                                                <span>{result.name}</span>
+                                                {type === 'drivers' ? (
+                                                    <span>{result.constructor}</span>
+                                                ) : (
+                                                    <span>{result.name}</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-3 py-4">{result.points}</td>
