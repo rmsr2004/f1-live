@@ -53,17 +53,17 @@ function ResultsSection({ qualifyingResults, raceResults, sprintResults }: Resul
     );
 
     const renderQualifying = () => (
-        <div className="f1-card overflow-x-auto">
-            <div id="sprint-results" className="results-table">
-                <table className="w-full">
+        <div className="f1-card">
+            <div id="quali-results" className="results-table overflow-x-auto w-full">
+                <table className="min-w-[700px] w-full">
                     <thead className="bg-[#15151E]">
                         <tr>
-                            <th className="px-3 py-4 text-left">Pos</th>
-                            <th className="px-3 py-4 text-left">Driver</th>
-                            <th className="px-3 py-4 text-left">Team</th>
-                            <th className="px-3 py-4 text-left">Q1</th>
-                            <th className="px-3 py-4 text-left">Q2</th>
-                            <th className="px-3 py-4 text-left">Q3</th>
+                            <th className="px-3 py-4 text-left whitespace-nowrap">Pos</th>
+                            <th className="px-3 py-4 text-left whitespace-nowrap">Driver</th>
+                            <th className="px-3 py-4 text-left whitespace-nowrap">Team</th>
+                            <th className="px-3 py-4 text-left whitespace-nowrap">Q1</th>
+                            <th className="px-3 py-4 text-left whitespace-nowrap">Q2</th>
+                            <th className="px-3 py-4 text-left whitespace-nowrap">Q3</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,16 +77,16 @@ function ResultsSection({ qualifyingResults, raceResults, sprintResults }: Resul
                             qualifyingResults.map((result, index) => (
                                 <tr key={index} className="result-row">
                                     <td className="px-3 py-4 font-bold">{result.position}</td>
-                                    <td className="px-3 py-4">
+                                    <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
                                             <div className={`w-1 h-6 mr-3 ${getTeamColorClass(result.constructor.name)}`}></div>
                                             <span>{result.driver.name}</span>
                                         </div>
                                     </td>
-                                    <td className="px-3 py-4">{result.constructor.name}</td>
-                                    <td className="px-3 py-4">{result.times?.timeQ1 || '-'}</td>
-                                    <td className="px-3 py-4">{result.times?.timeQ2 || '-'}</td>
-                                    <td className="px-3 py-4">{result.times?.timeQ3 || '-'}</td>
+                                    <td className="px-3 py-4 whitespace-nowrap">{result.constructor.name}</td>
+                                    <td className="px-3 py-4 whitespace-nowrap">{result.times?.timeQ1 || '-'}</td>
+                                    <td className="px-3 py-4 whitespace-nowrap">{result.times?.timeQ2 || '-'}</td>
+                                    <td className="px-3 py-4 whitespace-nowrap">{result.times?.timeQ3 || '-'}</td>
                                 </tr>
                             ))
                         )}
