@@ -1,13 +1,17 @@
 {
   "name": "f1-live",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.2.0",
   "type": "module",
+  "homepage": "https://rmsr2004.github.io/f1-live",
+
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
