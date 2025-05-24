@@ -89,9 +89,8 @@ npm run tauri dev
 
 Contributions are welcome! Feel free to open issues and pull requests for improvements, bug fixes, or new features.
 
-## Future Plan
-
-Develop a mobile app using React Native
+## Web Version
+The web version of f1-live can be accessed at https://rmsr2004.github.io/f1-live/ from any browser on your computer or cell phone.
 
 ## License
 
