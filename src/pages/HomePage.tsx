@@ -35,9 +35,9 @@ function HomePage() {
                             <h1 className="text-3xl md:text-4xl font-black ml-4">F1 LIVE</h1>
                         </div>
                         <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-                            <Link to="/standings/drivers" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Drivers Standings</Link>
+                            <Link to="standings/drivers" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Drivers Standings</Link>
 
-                            <Link to="/standings/constructors" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Constructors Standings</Link>
+                            <Link to="standings/constructors" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Constructors Standings</Link>
                         </div>
                         <div className="hidden md:block">
                             <div className="bg-[#1F1F2B] rounded-full px-4 py-2 flex items-center">

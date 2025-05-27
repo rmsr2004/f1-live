@@ -143,7 +143,7 @@ export async function getAllGrandPrixes() {
         const raceDateTime = new Date(`${race.date}T${race.time}`);
         const now = new Date();
 
-        let status = raceDateTime < now ? 'COMPLETED' : 'NEXT';
+        let status = raceDateTime < now ? 'COMPLETED' : 'UPCOMING';
 
         const fp1DateTime = new Date(`${start}T${race.FirstPractice.time}`);
         if (fp1DateTime < now && now < raceDateTime) {
@@ -236,6 +236,10 @@ export async function getGrandPrixResults(round: number): Promise<GrandPrixResul
 
     if (fp1DateTime < new Date()) {
         status = 'ONGOING';
+    }
+
+    if (new Date(`${raceInfo.date}T${raceInfo.time}`) < new Date()) {
+        status = 'COMPLETED';
     }
 
     return {

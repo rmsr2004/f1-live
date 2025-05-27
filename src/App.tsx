@@ -10,8 +10,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/grandprix/:round" element={<GrandPrix />} />
-        <Route path="/standings/:type" element={<StandingsPage />} />
+        <Route path="grandprix/:round" element={<GrandPrix />} />
+        <Route path="standings/:type" element={<StandingsPage />} />
       </Routes>
     </Router>
   );
