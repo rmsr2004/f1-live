@@ -29,11 +29,17 @@ export function formatDateRange(startDateStr: string, endDateStr: string): strin
 
     const dayStart = startDate.getDate();
     const dayEnd = endDate.getDate();
-
-    const month = startDate.toLocaleString('en-EN', { month: 'long' });
+    
+    const startMonth = startDate.toLocaleString('en-EN', { month: 'long' });
+    const endMonth = endDate.toLocaleString('en-EN', { month: 'long' });
+    
     const year = startDate.getFullYear();
 
-    return `${dayStart}-${dayEnd} ${capitalize(month)} ${year}`;
+    if (startMonth === endMonth) {
+        return `${dayStart} - ${dayEnd} ${capitalize(startMonth)} ${year}`;
+    } else {
+        return `${dayStart} ${capitalize(startMonth)} - ${dayEnd} ${capitalize(endMonth)} ${year}`;
+    }
 }
 
 export function capitalize(str: string) {

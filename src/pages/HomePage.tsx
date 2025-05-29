@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { getNextGrandPrix, getAllGrandPrixes } from "../services/api";
 import { GrandPrixData, GrandPrixShortData } from "../services/api";
@@ -10,6 +10,7 @@ function HomePage() {
     const [nextGP, setNextGP] = useState<GrandPrixData | null>(null);
     const [allGPs, setAllGPs] = useState<GrandPrixShortData[]>([]);
     const [isLoading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
@@ -47,7 +48,7 @@ function HomePage() {
                     </header>
 
                     {nextGP && (
-                        <section className="mb-12">
+                        <section className="mb-12" onClick={() => navigate(`/grandprix/${nextGP.round}`)}>
                             <h2 className="text-2xl font-bold mb-6">NEXT GRAND PRIX</h2>
                             <div className="f1-card p-6">
                                 <div className="flex flex-col md:flex-row justify-between">
