@@ -6,15 +6,15 @@ import StandingsPage from './pages/StandingsPage';
 import './App.css';
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="grandprix/:round" element={<GrandPrix />} />
-        <Route path="standings/:type" element={<StandingsPage />} />
-      </Routes>
-    </Router>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="grandprix/:round" element={<GrandPrix />} />
+                <Route path="standings/:type" element={<StandingsPage />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;

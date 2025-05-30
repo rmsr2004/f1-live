@@ -1,7 +1,7 @@
 {
-  "name": "f1-live",
+  "name": "F1-Live",
   "private": true,
-  "version": "1.2.2",
+  "version": "1.2.3",
   "type": "module",
   "homepage": "https://rmsr2004.github.io/f1-live",
   "scripts": {
