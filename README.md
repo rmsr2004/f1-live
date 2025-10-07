@@ -100,7 +100,7 @@ MIT License © 2025 Rodrigo Rodrigues
 
 Rodrigo Rodrigues - rodrigomiguelsr2004@gmail.com
 
-Github: https://github.com/rmsr2004.com
+Github: https://github.com/rmsr2004
 
 ## Preview
 
