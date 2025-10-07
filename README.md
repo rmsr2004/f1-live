@@ -1,6 +1,6 @@
 # F1 LIVE
 
-> Linux desktop application to follow the current Formula 1 season in real-time.  
+> Linux desktop and web application to follow the current Formula 1 season in real-time.  
 > Built with React, TypeScript, and Tauri, focusing on a smooth experience, modern interface, and up-to-date data.
 
 ---
