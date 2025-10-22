@@ -1,6 +1,7 @@
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 export async function registerDevice() {
+    console.log("backend-url: ", import.meta.env.BACKEND_URL);
     console.log("Registering device for notifications...");
 
     const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
