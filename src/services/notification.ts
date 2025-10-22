@@ -1,14 +1,18 @@
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 export async function registerDevice() {
+    console.log("Registering device for notifications...");
+
     const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
     localStorage.setItem("deviceId", deviceId);
 
-    await fetch(`${import.meta.env.BACKEND_URL}/register`, {
+    const res = await fetch(`${import.meta.env.BACKEND_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deviceId }),
     });
+
+    console.log("res: ", res);
 
     //const data = await res.json();
 
@@ -28,7 +32,7 @@ export async function registerDevice() {
         body: JSON.stringify({ deviceId, fcmToken: realFcmToken }),
     });
 
-    onMessage(messaging, (payload) => {
+    onMessage(messaging, (payload: any) => {
         new Notification(payload.notification?.title || "Notification", {
             body: payload.notification?.body,
             icon: "../assets/icon.png",
