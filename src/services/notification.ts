@@ -1,13 +1,13 @@
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 export async function registerDevice() {
-    console.log("backend-url: ", import.meta.env.BACKEND_URL);
+    console.log("backend-url: ", import.meta.env.VITE_BACKEND_URL);
     console.log("Registering device for notifications...");
 
     const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
     localStorage.setItem("deviceId", deviceId);
 
-    const res = await fetch(`${import.meta.env.BACKEND_URL}/register`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deviceId }),
@@ -27,7 +27,7 @@ export async function registerDevice() {
         vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
     });
 
-    await fetch(`${import.meta.env.BACKEND_URL}/update-fcm-token`, {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/update-fcm-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deviceId, fcmToken: realFcmToken }),
