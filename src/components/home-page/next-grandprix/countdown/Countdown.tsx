@@ -4,7 +4,7 @@ interface CountdownProps {
     targetDate: string;
 }
 
-const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
+function Countdown({ targetDate }: CountdownProps) {
     function getTimeLeft() {
         const now = new Date();
         const target = new Date(targetDate);
@@ -43,13 +43,15 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
     const { days, hours, minutes, seconds } = timeLeft;
 
     return (
-        <div className="flex flex-col items-center">
-            <span className="text-sm text-gray-400 mb-2">RACE STARTS IN</span>
-            <div className="next-race-countdown text-2xl md:text-4xl font-black p-4 rounded-lg">
-                {`${days}D : ${String(hours).padStart(2, '0')}H : ${String(minutes).padStart(2, '0')}M : ${String(seconds).padStart(2, '0')}S`}
+        <>
+            <div className="flex flex-col items-center">
+                <span className="text-sm text-gray-400 mb-2">RACE STARTS IN</span>
+                <div className="next-race-countdown text-2xl md:text-4xl font-black p-4 rounded-lg">
+                    {`${days}D : ${String(hours).padStart(2, '0')}H : ${String(minutes).padStart(2, '0')}M : ${String(seconds).padStart(2, '0')}S`}
+                </div>
             </div>
-        </div>
+        </>
     );
-};
+}
 
 export default Countdown;

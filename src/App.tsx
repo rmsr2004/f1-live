@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 
 import { registerDevice } from './services/notification';
 
-import HomePage from './pages/HomePage';
-import GrandPrix from './pages/GrandPrixPage';
-import StandingsPage from './pages/StandingsPage';
+import HomePage from './components/home-page/HomePage';
+import GrandPrix from './components/grand-prix-page/GrandPrixPage';
+import StandingsPage from './components/standings-page/StandingsPage';
 import './App.css';
 
 function App() {

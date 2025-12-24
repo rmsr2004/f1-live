@@ -19,6 +19,7 @@ export interface GrandPrixData {
 }
 
 export interface GrandPrixShortData {
+    champion: string;
     round: number;
     raceName: string;
     circuitName: string;
@@ -88,17 +89,22 @@ export async function getNextGrandPrix() {
         { key: 'Qualifying', name: 'QUALIFYING' },
     ];
 
-    const sessions = sessionMappings
-        .filter(({ key }) => race[key])
-        .map(({ key, name }) => {
-            const dateStr = race[key]!.date;
-            const timeStr = race[key]!.time;
-
-            return {
-                sessionName: name,
-                datetime: formatDateTime(dateStr, timeStr),
-            };
-        });
+    let sessions: Sessions[] = [];
+    try {
+        sessions = sessionMappings
+            .filter(({ key }) => race[key])
+            .map(({ key, name }) => {
+                const dateStr = race[key]!.date;
+                const timeStr = race[key]!.time;
+    
+                return {
+                    sessionName: name,
+                    datetime: formatDateTime(dateStr, timeStr),
+                };
+            });
+    } catch (error) {
+        return null;
+    }
 
     sessions.push({
         sessionName: 'RACE',
