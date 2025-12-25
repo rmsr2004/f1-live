@@ -1,11 +1,12 @@
-import { GrandPrixShortData } from "../../../services/api";
+import { GrandPrixShortData } from "../../../services/client/models/GrandPrixShortData.ts";
 import GrandPrixCard from "./grand-prix-card/GrandPrixCard";
 
 interface AllGPsProps {
+    season: string;
     allGPs: GrandPrixShortData[];
 }
 
-function AllGPs({ allGPs }: AllGPsProps) {
+function AllGPs({ season, allGPs }: AllGPsProps) {
     return (
         <>
             <div className="mb-6 border-b border-gray-700">
@@ -22,7 +23,7 @@ function AllGPs({ allGPs }: AllGPsProps) {
                 <section id="race-calendar" className="mb-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {allGPs.map((gp) => (
-                            <GrandPrixCard gp={gp} />
+                            <GrandPrixCard season={season} gp={gp} />
                         ))}
                     </div>
                 </section>

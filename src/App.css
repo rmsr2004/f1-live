@@ -96,6 +96,16 @@ body {
     background-color: #FFFFFF;
 }
 
+.team-color-audi {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+
+.team-color-cadillac {
+    background-color: #002F6C;
+    color: #FFFFFF;
+}
+
 .session-btn {
     transition: all 0.3s ease;
 }

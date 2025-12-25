@@ -1,66 +1,13 @@
 import axios from 'axios';
-import { formatDateTime, formatDateRange, getISOStringFromDateTimePT } from '../utils/dateUtils';
+import { formatDateTime, formatDateRange, getISOStringFromDateTimePT } from '../../utils/dateUtils';
+import { GrandPrixData } from './models/GrandPrixData.tsx';
+import { SessionResults } from './models/SessionResults.tsx';
+import Session from './models/Session.tsx';
+import { Standings } from './models/Standings.tsx';
+import { GrandPrixResults } from './models/GrandPrixResults.tsx';
+import { GrandPrixShortData } from './models/GrandPrixShortData.ts';
 
 const API_URL = 'https://api.jolpi.ca/ergast/';
-
-interface Sessions {
-    sessionName: string;
-    datetime: string;
-}
-
-export interface GrandPrixData {
-    round: number;
-    raceName: string;
-    circuitName: string;
-    dateRange: string;
-    raceDateISO?: string;
-    sessions: Sessions[];
-    status?: string;
-}
-
-export interface GrandPrixShortData {
-    champion: string;
-    round: number;
-    raceName: string;
-    circuitName: string;
-    dateRange: string;
-    winner: string;
-    status: string;
-}
-
-export interface SessionResults {
-    position: number;
-    grid?: number;
-    driver: {
-        name: string;
-    };
-    constructor: {
-        name: string;
-    };
-    points?: number;
-    times?: {
-        timeQ1: string;
-        timeQ2: string;
-        timeQ3: string;
-    };
-}
-
-export interface Standings {
-    standings: {
-        name: string;
-        constructor?: string;
-        points: number;
-    }[];
-    lastUpdate: string;
-}
-
-export interface GrandPrixResults {
-    grandPrixData: GrandPrixData,
-    raceResults: SessionResults[];
-    qualifyingResults: SessionResults[];
-    sprintResults: SessionResults[];
-    status: string;
-}
 
 const API = axios.create({
     baseURL: API_URL,
@@ -75,10 +22,14 @@ async function safeGet(url: string) {
     }
 }
 
-export async function getNextGrandPrix() {
-    const response = await API.get('/f1/2025/next.json');
+export async function getNextGrandPrix(season: string): Promise<GrandPrixData | null> {
+    const response = await API.get(`/f1/${season}/next.json`);
 
     const race = response.data.MRData.RaceTable.Races[0];
+
+    if (Number(race.season) > Number(season)) {
+        return null;
+    }
 
     const sessionMappings: { key: keyof typeof race; name: string }[] = [
         { key: 'FirstPractice', name: 'FP1' },
@@ -89,7 +40,7 @@ export async function getNextGrandPrix() {
         { key: 'Qualifying', name: 'QUALIFYING' },
     ];
 
-    let sessions: Sessions[] = [];
+    let sessions: Session[] = [];
     try {
         sessions = sessionMappings
             .filter(({ key }) => race[key])
@@ -135,49 +86,58 @@ export async function getNextGrandPrix() {
     return grandPrixData;
 }
 
-export async function getAllGrandPrixes() {
-    const response = await API.get('/f1/2025.json');
-    const races = response.data.MRData.RaceTable.Races;
+export async function getAllGrandPrixes(season: string): Promise<GrandPrixShortData[]> {
+    const calendarResponse = await API.get(`/f1/${season}.json`);
+    const races = calendarResponse.data.MRData.RaceTable.Races;
 
-    let index = 1;
+    const resultsResponse = await API.get(`/f1/${season}/results.json?limit=500`);
+    const resultsRaces = resultsResponse.data.MRData.RaceTable.Races;
 
-    const allGrandPrixesPromises = races.map(async (race: any) => {
+    const resultsByRound = new Map<string, any>();
+    resultsRaces.forEach((race: any) => {
+        resultsByRound.set(race.round, race);
+    });
+
+    const now = new Date();
+
+    return races.map((race: any) => {
         const start = race.FirstPractice?.date;
         const end = race.date;
         const dateRange = formatDateRange(start, end);
 
         const raceDateTime = new Date(`${race.date}T${race.time}`);
-        const now = new Date();
-
-        let status = raceDateTime < now ? 'COMPLETED' : 'UPCOMING';
-
         const fp1DateTime = new Date(`${start}T${race.FirstPractice.time}`);
-        if (fp1DateTime < now && now < raceDateTime) {
-            status = 'ONGOING';
-        }
 
-        const winner = status === 'COMPLETED' ? await getRaceWinner(index++) : "N/D";
+        let status: 'COMPLETED' | 'ONGOING' | 'UPCOMING' = 'UPCOMING';
+
+        if (raceDateTime < now) status = 'COMPLETED';
+        else if (fp1DateTime < now && now < raceDateTime) status = 'ONGOING';
+
+        let winner = "N/D";
+        if (status === 'COMPLETED') {
+            const raceResult = resultsByRound.get(race.round);
+            const winnerDriver = raceResult?.Results?.[0]?.Driver;
+            if (winnerDriver) {
+                winner = `${winnerDriver.givenName} ${winnerDriver.familyName}`;
+            }
+        }
 
         return {
             round: race.round,
             raceName: race.raceName.toUpperCase(),
             circuitName: `${race.Circuit.circuitName}, ${race.Circuit.Location.locality}`,
-            dateRange: dateRange,
-            winner: winner,
-            status: status,
+            dateRange,
+            winner,
+            status,
         };
     });
-
-    const allGrandPrixes = await Promise.all(allGrandPrixesPromises);
-
-    return allGrandPrixes;
 }
 
-export async function getGrandPrixResults(round: number): Promise<GrandPrixResults> {
-    const raceInfo = await safeGet(`/f1/2025/${round}.json`);
-    const race = await safeGet(`/f1/2025/${round}/results.json`);
-    const qualifying = await safeGet(`/f1/2025/${round}/qualifying.json`);
-    const sprint = await safeGet(`/f1/2025/${round}/sprint.json`);
+export async function getGrandPrixResults(season: string, round: number): Promise<GrandPrixResults> {
+    const raceInfo = await safeGet(`/f1/${season}/${round}.json`);
+    const race = await safeGet(`/f1/${season}/${round}/results.json`);
+    const qualifying = await safeGet(`/f1/${season}/${round}/qualifying.json`);
+    const sprint = await safeGet(`/f1/${season}/${round}/sprint.json`);
 
     const sessionMappings: { key: keyof typeof raceInfo; name: string }[] = [
         { key: 'FirstPractice', name: 'FP1' },
@@ -257,10 +217,57 @@ export async function getGrandPrixResults(round: number): Promise<GrandPrixResul
     };
 }
 
-export async function getDriverStandings(): Promise<Standings> {
-    let response = await API.get('/f1/2025/driverStandings.json');
+export async function getSeasonDriverChampion(season: string): Promise<string> {
+    const response = await API.get(`/f1/${season}/driverStandings.json`);
 
     const standings = response.data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
+
+    if (standings.length === 0) {
+        return "N/D";
+    }
+
+    const champion = standings[0].Driver;
+
+    return `${champion.givenName} ${champion.familyName}`;
+}
+
+export async function getSeasonConstructorChampion(season: string): Promise<string> {
+    const response = await API.get(`/f1/${season}/constructorStandings.json`);
+
+    const standings = response.data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+
+    if (standings.length === 0) {
+        return "N/D";
+    }
+
+    const champion = standings[0].Constructor;
+
+    return champion.name;
+}
+
+export async function getDriverStandings(season: string): Promise<Standings> {
+    let response = await API.get(`/f1/${season}/driverStandings.json`);
+
+    let standings = response.data.MRData.StandingsTable.StandingsLists;
+
+    if (standings.length === 0) {
+        let drivers = await API.get(`/f1/${season}/drivers.json`);
+
+        const driverList = drivers.data.MRData.DriverTable.Drivers;
+        
+        const formattedStandings = driverList.map((driver: any) => ({
+            name: `${driver.givenName} ${driver.familyName}`,
+            constructor: "N/D",
+            points: 0,
+        }));
+
+        return {
+            standings: formattedStandings,
+            lastUpdate: "LAST SEASON",
+        }
+    }
+
+    standings = standings[0].DriverStandings;
 
     const formattedStandings = standings.map((entry: any) => ({
         name: `${entry.Driver.givenName} ${entry.Driver.familyName}`,
@@ -268,7 +275,7 @@ export async function getDriverStandings(): Promise<Standings> {
         points: parseInt(entry.points),
     }));
 
-    response = await API.get('/f1/2025/last.json');
+    response = await API.get(`/f1/${season}/last.json`);
     const lastUpdate = response.data.MRData.RaceTable.Races[0].raceName;
 
     return {
@@ -277,17 +284,34 @@ export async function getDriverStandings(): Promise<Standings> {
     };
 }
 
-export async function getConstructorStandings(): Promise<Standings> {
-    let response = await API.get('/f1/2025/constructorStandings.json');
+export async function getConstructorStandings(season: string): Promise<Standings> {
+    let response = await API.get(`/f1/${season}/constructorStandings.json`);
 
-    const standings = response.data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+    let standings = response.data.MRData.StandingsTable.StandingsLists;
 
+    if (standings.length === 0) {
+        let constructors = await API.get(`/f1/${season}/constructors.json`);
+
+        const constructorList = constructors.data.MRData.ConstructorTable.Constructors;
+        
+        const formattedStandings = constructorList.map((constructor: any) => ({
+            name: constructor.name,
+            points: 0,
+        }));
+
+        return {
+            standings: formattedStandings,
+            lastUpdate: "LAST SEASON",
+        }
+    }
+
+    standings = standings[0].ConstructorStandings;
     const formattedStandings = standings.map((entry: any) => ({
         name: entry.Constructor.name,
         points: entry.points,
     }));
 
-    response = await API.get('/f1/2025/last.json');
+    response = await API.get(`/f1/${season}/last.json`);
     const lastUpdate = response.data.MRData.RaceTable.Races[0].raceName;
 
     return {
@@ -296,15 +320,3 @@ export async function getConstructorStandings(): Promise<Standings> {
     };
 }
 
-async function getRaceWinner(round: number) {
-    const response = await API.get(`/f1/2025/${round}/results.json`);
-
-    if (!response.data.MRData.RaceTable.Races[0]) {
-        return "N/D";
-    }
-
-    const winner = response.data.MRData.RaceTable.Races[0].Results[0].Driver;
-
-    return `${winner.givenName} ${winner.familyName}`;
-
-}

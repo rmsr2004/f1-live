@@ -1,12 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 interface HeaderProps {
-    seasons?: string[];
     currentSeason: string;
     backButton?: boolean;
+    onSeasonChange?: (season: string) => void;
 }
 
-function Header({ seasons, currentSeason, backButton }: HeaderProps) {
+function Header({ currentSeason, backButton, onSeasonChange }: HeaderProps) {
+    const seasons = ["2026", "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010"];
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const seasonFromUrl = searchParams.get("season");
+    const season = seasonFromUrl || currentSeason;
+
+    const handleClickHome = () => {
+        setSearchParams({ season: "2026" });
+    };
+
     return (
         <header className="flex justify-between items-center mb-8">
             <div className="flex items-center">
@@ -19,20 +29,46 @@ function Header({ seasons, currentSeason, backButton }: HeaderProps) {
                         </button>
                     </Link>
                 )}
-                <h1 className="text-3xl md:text-4xl font-black ml-4">F1 LIVE</h1>
+                <Link to="/" onClick={handleClickHome}>
+                    <h1 className="text-3xl md:text-4xl font-black ml-4 cursor-pointer">F1 LIVE</h1>
+                </Link>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-                <Link to="standings/drivers" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Drivers Standings</Link>
+                <Link
+                    to={`/standings/drivers?season=${season}`}
+                    className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition"
+                >
+                    Drivers Standings
+                </Link>
 
-                <Link to="standings/constructors" className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition">Constructors Standings</Link>
+                <Link
+                    to={`/standings/constructors?season=${season}`}
+                    className="bg-[#15151E] hover:bg-[#2A2A3A] px-4 py-2 rounded-lg transition"
+                >
+                    Constructors Standings
+                </Link>
             </div>
-            <div className="hidden md:block">
-                <div className="bg-[#1F1F2B] rounded-full px-4 py-2 flex items-center">
-                    <span className="mr-2">{currentSeason} Season</span>
+            {seasons && onSeasonChange && (
+                <div className="hidden md:block">
+                    <select
+                        value={currentSeason}
+                        onChange={(e) => {
+                            onSeasonChange(e.target.value);
+                            setSearchParams({ season: e.target.value });
+                        }}
+                        className="bg-[#1F1F2B] text-white rounded-full px-4 py-2 outline-none cursor-pointer hover:bg-[#2A2A3A] transition"
+                    >
+                        {seasons.map((season) => (
+                            <option key={season} value={season}>
+                                {season} Season
+                            </option>
+                        ))}
+                    </select>
                 </div>
-            </div>
+            )}
+
         </header>
     );
-
 }
+
 export default Header;

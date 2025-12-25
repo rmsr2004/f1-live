@@ -10,6 +10,8 @@ export default function getTeamColorClass(teamName: string): string {
         'Sauber': 'team-color-sauber',
         'RB F1 Team': 'team-color-rb',
         'Haas F1 Team': 'team-color-haas',
+        'Audi': 'team-color-audi',
+        'Cadillac F1 Team': 'team-color-cadillac',
     };
 
     return map[teamName];

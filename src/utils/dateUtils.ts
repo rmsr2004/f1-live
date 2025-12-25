@@ -7,14 +7,34 @@ export function getISOStringFromDateTimePT(date: string, time: string): string {
 }
 
 export function formatDateTime(date: string, time: string): string {
-    const dt = new Date(`${date}T${time}`);
+    console.log('Formatting date and time:', date, time);
+
+    let dt: Date;
+
+    if (!time) {
+        dt = new Date(date);
+        const formatter = new Intl.DateTimeFormat('en-EN', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            timeZone: 'Europe/Lisbon',
+        });
+
+        return formatter.format(dt).replace('.', '').replace(/^./, c => c.toUpperCase());
+    }
+
+    dt = new Date(`${date}T${time}`);
+
     const formatter = new Intl.DateTimeFormat('en-EN', {
         weekday: 'short',
         day: '2-digit',
         month: 'long',
         timeZone: 'Europe/Lisbon',
     });
+
     const weekdayDayMonth = formatter.format(dt).replace('.', '').replace(/^./, c => c.toUpperCase());
+    
     const hourMinute = dt.toLocaleTimeString('pt-PT', {
         hour: '2-digit',
         minute: '2-digit',
