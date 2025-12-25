@@ -1,5 +1,5 @@
-import { Standings } from "../../services/api";
-import getTeamColorClass from "../../utils/utils";
+import { Standings } from "@client/models/Standings.ts";
+import getTeamColorClass from "@utils/utils";
 
 interface StandingsTableProps {
     type: 'drivers' | 'constructors';

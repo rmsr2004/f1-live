@@ -1,4 +1,4 @@
-import { Standings } from "../../services/api";
+import { Standings } from "@client/models/Standings.ts";
 
 interface StandingsTitleProps {
     type: 'drivers' | 'constructors';

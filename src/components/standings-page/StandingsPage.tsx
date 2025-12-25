@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
-import { getDriverStandings, getConstructorStandings } from '../../services/client/client.ts';
-import Spinner from '../../components/spinner/Spinner';
-import Header from '../header/Header';
+import { getDriverStandings, getConstructorStandings } from '@client/client.ts';
+import { Standings } from '@client/models/Standings.ts';
+
 import StandingsTitle from './StandingsTitle';
 import StandingsTable from './StandingsTable';
-import { Standings } from '../../services/client/models/Standings.ts';
+
+import Spinner from '@components/spinner/Spinner';
+import Header from '@components/header/Header';
 
 function StandingsPage() {
     const { type } = useParams<{ type: string }>();

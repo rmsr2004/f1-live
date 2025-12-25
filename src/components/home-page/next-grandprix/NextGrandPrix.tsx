@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-import { GrandPrixData } from "../../../services/api";
-import Countdown from "./countdown/Countdown";
+import { GrandPrixData } from "@client/models/GrandPrixData.ts";
 
+import Countdown from "./countdown/Countdown";
 import SessionCard from "./SessionCard";
 import GrandPrixInfo from "./GrandPrixInfo";
 

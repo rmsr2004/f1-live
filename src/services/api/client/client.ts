@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { formatDateTime, formatDateRange, getISOStringFromDateTimePT } from '../../utils/dateUtils';
+import { formatDateTime, formatDateRange, getISOStringFromDateTimePT } from '@utils/dateUtils';
 import { GrandPrixData } from './models/GrandPrixData.tsx';
 import { SessionResults } from './models/SessionResults.tsx';
 import Session from './models/Session.tsx';

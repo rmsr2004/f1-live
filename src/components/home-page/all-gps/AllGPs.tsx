@@ -1,4 +1,5 @@
-import { GrandPrixShortData } from "../../../services/client/models/GrandPrixShortData.ts";
+import { GrandPrixShortData } from "@client/models/GrandPrixShortData.ts";
+
 import GrandPrixCard from "./grand-prix-card/GrandPrixCard";
 
 interface AllGPsProps {

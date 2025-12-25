@@ -1,4 +1,4 @@
-import { GrandPrixData } from "../../services/api";
+import { GrandPrixData } from "@client/models/GrandPrixData.ts";
 
 interface GrandPrixScheduleProps {
     grandPrixData: GrandPrixData;

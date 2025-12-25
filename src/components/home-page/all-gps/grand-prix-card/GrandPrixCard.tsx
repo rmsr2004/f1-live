@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import { GrandPrixShortData } from "../../../../services/client/models/GrandPrixShortData.ts";
+
+import { GrandPrixShortData } from "@client/models/GrandPrixShortData.ts";
+
 import GrandPrixInfo from "./GrandPrixInfo";
 import GrandPrixCardHeader from "./GrandPrixCardHeader";
 

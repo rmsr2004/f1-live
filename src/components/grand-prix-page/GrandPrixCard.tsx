@@ -1,5 +1,5 @@
-import { GrandPrixResults } from "../../services/client/models/GrandPrixResults.ts";
-import getTeamColorClass from "../../utils/utils";
+import { GrandPrixResults } from "@client/models/GrandPrixResults.ts";
+import getTeamColorClass from "@utils/utils.ts";
 
 interface GrandPrixCardProps {
     grandPrixData: GrandPrixResults["grandPrixData"];

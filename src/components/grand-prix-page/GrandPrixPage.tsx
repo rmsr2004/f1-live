@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
-import { getGrandPrixResults } from '../../services/client/client.ts';
-import ResultsSection from '../results/ResultsSection';
-import Spinner from '../spinner/Spinner';
-import Header from '../header/Header';
+import { getGrandPrixResults } from '@client/client.ts';
+import { GrandPrixResults } from '@client/models/GrandPrixResults.ts';
+
+import ResultsSection from '@components/results/ResultsSection';
+import Spinner from '@components/spinner/Spinner';
+import Header from '@components/header/Header';
+
 import GrandPrixCard from './GrandPrixCard';
 import GrandPrixSchedule from './GrandPrixSchedule';
-import { GrandPrixResults } from '../../services/client/models/GrandPrixResults.ts';
 
 function GrandPrixPage() {
     const { round } = useParams<{ round: string }>();

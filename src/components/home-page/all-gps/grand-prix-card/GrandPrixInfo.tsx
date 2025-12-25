@@ -1,4 +1,4 @@
-import { GrandPrixShortData } from "../../../../services/api";
+import { GrandPrixShortData } from "@client/models/GrandPrixShortData.ts";
 
 interface GrandPrixInfoProps {
     gp: GrandPrixShortData;

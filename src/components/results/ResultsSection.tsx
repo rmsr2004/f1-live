@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { GrandPrixResults } from "../../services/client/models/GrandPrixResults.ts";
-import getTeamColorClass from "../../utils/utils";
+import { GrandPrixResults } from "@client/models/GrandPrixResults.ts";
+import getTeamColorClass from "@utils/utils";
 
 interface ResultsSectionProps {
     qualifyingResults: GrandPrixResults["qualifyingResults"];

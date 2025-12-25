@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
-import { getNextGrandPrix, getAllGrandPrixes, getSeasonDriverChampion, getSeasonConstructorChampion } from "../../services/client/client.ts";
-import { GrandPrixData } from "../../services/client/models/GrandPrixData.ts";
+import { 
+    getNextGrandPrix,
+    getAllGrandPrixes,
+    getSeasonDriverChampion,
+    getSeasonConstructorChampion 
+} from "@client/client.ts";
+import { GrandPrixData } from "@client/models/GrandPrixData.ts";
+import { GrandPrixShortData } from "@client/models/GrandPrixShortData.ts";
 
-import Spinner from "../spinner/Spinner";
-import Header from "../header/Header";
+import Spinner from "@components/spinner/Spinner";
+import Header from "@components/header/Header";
+
 import NextGrandPrix from "./next-grandprix/NextGrandPrix";
 import AllGPs from "./all-gps/AllGPs";
-import { GrandPrixShortData } from "../../services/client/models/GrandPrixShortData.ts";
-import { useSearchParams } from "react-router-dom";
 import Champions from "./champions/Champions.tsx";
 
 function HomePage() {
