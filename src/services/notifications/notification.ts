@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getMessaging, getToken, onMessage, Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
@@ -10,47 +10,71 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-export const messaging = getMessaging(app);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
+export let messaging: Messaging | null = null;
+
+if (firebaseConfig.projectId) {
+    try {
+        messaging = getMessaging(app);
+    } catch (error) {
+        console.error("Failed to initialize Firebase Messaging:", error);
+    }
+}
 
 export async function registerDevice() {
-    console.log("backend-url: ", import.meta.env.VITE_BACKEND_URL);
-    console.log("Registering device for notifications...");
+    if (!firebaseConfig.projectId) {
+        console.warn("Firebase configuration value (VITE_PROJECT_ID) is missing.");
+        return;
+    }
 
     const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
     localStorage.setItem("deviceId", deviceId);
 
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deviceId }),
-    });
-
-    console.log("res: ", res);
-
-    //const data = await res.json();
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    if (backendUrl) {
+        await fetch(`${backendUrl}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ deviceId }),
+        }).catch((err) => console.error("Failed to register device with backend:", err));
+    }
 
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
         return;
     }
 
-    const messaging = getMessaging();
-    const realFcmToken = await getToken(messaging, {
-        vapidKey: import.meta.env.VITE_VAPID_KEY,
-    });
+    if (!messaging) {
+        try {
+            messaging = getMessaging(app);
+        } catch (err) {
+            console.error("Firebase messaging not available:", err);
+            return;
+        }
+    }
 
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/update-fcm-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deviceId, fcmToken: realFcmToken }),
-    });
-
-    onMessage(messaging, (payload: any) => {
-        console.log("Message received. ", payload);
-        new Notification(payload.notification?.title || "Notification", {
-            body: payload.notification?.body,
-            icon: "../assets/icon.png",
+    try {
+        const realFcmToken = await getToken(messaging, {
+            vapidKey: import.meta.env.VITE_VAPID_KEY,
         });
-    });
+
+        if (backendUrl) {
+            await fetch(`${backendUrl}/update-fcm-token`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ deviceId, fcmToken: realFcmToken }),
+            }).catch((err) => console.error("Failed to update FCM token on backend:", err));
+        }
+
+        onMessage(messaging, (payload: any) => {
+            new Notification(payload.notification?.title || "Notification", {
+                body: payload.notification?.body,
+                icon: "../assets/icon.png",
+            });
+        });
+    } catch (err) {
+        console.error("Error setting up FCM token or message listener:", err);
+    }
 }
+

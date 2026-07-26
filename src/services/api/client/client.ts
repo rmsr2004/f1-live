@@ -90,13 +90,25 @@ export async function getAllGrandPrixes(season: string): Promise<GrandPrixShortD
     const calendarResponse = await API.get(`/f1/${season}.json`);
     const races = calendarResponse.data.MRData.RaceTable.Races;
 
-    const resultsResponse = await API.get(`/f1/${season}/results.json?limit=500`);
-    const resultsRaces = resultsResponse.data.MRData.RaceTable.Races;
-
+    // The API caps results at 100 per request. With ~20 drivers per race,
+    // 100 results only covers ~5 rounds. We need to paginate to get all results.
     const resultsByRound = new Map<string, any>();
-    resultsRaces.forEach((race: any) => {
-        resultsByRound.set(race.round, race);
-    });
+    let offset = 0;
+    const limit = 100;
+    let total = Infinity;
+
+    while (offset < total) {
+        const resultsResponse = await API.get(`/f1/${season}/results.json?limit=${limit}&offset=${offset}`);
+        const mrData = resultsResponse.data.MRData;
+        total = Number(mrData.total);
+        const resultsRaces = mrData.RaceTable.Races;
+
+        resultsRaces.forEach((race: any) => {
+            resultsByRound.set(race.round, race);
+        });
+
+        offset += limit;
+    }
 
     const now = new Date();
 

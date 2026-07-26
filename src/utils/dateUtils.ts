@@ -7,8 +7,6 @@ export function getISOStringFromDateTimePT(date: string, time: string): string {
 }
 
 export function formatDateTime(date: string, time: string): string {
-    console.log('Formatting date and time:', date, time);
-
     let dt: Date;
 
     if (!time) {
