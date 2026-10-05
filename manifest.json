@@ -1,0 +1,17 @@
+{
+  "short_name": "F1 Live",
+  "name": "F1 Live - Formula 1 Tracker",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0B0E14",
+  "theme_color": "#E10600",
+  "display": "standalone",
+  "orientation": "portrait"
+}

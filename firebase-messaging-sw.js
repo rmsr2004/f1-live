@@ -12,9 +12,11 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-    //console.log("[firebase-messaging-sw.js] Received background message ", payload);
-    self.registration.showNotification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: "/../src/assets/icon.png",
+    const title = payload.notification?.title || "F1 Live Notification";
+    self.registration.showNotification(title, {
+        body: payload.notification?.body || "",
+        icon: "/icon.png",
+        badge: "/icon.png",
+        vibrate: [200, 100, 200],
     });
 });
